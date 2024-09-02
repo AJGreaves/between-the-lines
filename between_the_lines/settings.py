@@ -32,7 +32,7 @@ if 'DEV_ENV' in os.environ:
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get('HOSTNAME')]
 
 
 # Application definition
