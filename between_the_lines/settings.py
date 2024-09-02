@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     # if adding summernote, it should go below here
+
+    # custom apps
+    'books',
 ]
 
 SITE_ID = 1
