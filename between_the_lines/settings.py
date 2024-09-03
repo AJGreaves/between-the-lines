@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'cloudinary_storage',
+    'cloudinary',
     # if adding summernote, it should go below here
 
     # custom apps
@@ -149,6 +151,12 @@ else:
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'https://between-the-lines-05b277479106.herokuapp.com'
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
