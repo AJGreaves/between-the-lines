@@ -10,12 +10,11 @@ class Genre(models.Model):
         return self.name
     
 class Book(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=50)
+    author = models.CharField(max_length=50)
+    description = models.TextField(max_length=255, blank=True, null=True)
     genre = models.ForeignKey(Genre, related_name="books", on_delete=models.CASCADE)
     cover_image = CloudinaryField('image', blank=False, null=False)
-    summary = models.TextField()
 
     def __str__(self):
         return self.title

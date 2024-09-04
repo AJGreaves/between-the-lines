@@ -7,14 +7,14 @@
 
 <div class="container">
     <div class="row">
-        {% for book in books %}
-        <div class="col-md-4">
-            <div class="card mb-3">
+        <div class="col-md-8 mt-5">
+            {% for book in books %}
+            <div class="card mb-3 custom-card">
                 <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{ book.cover_image.url }}" class="img-fluid rounded-start" alt="{{ book.title }}">
+                    <div class="col-md-2">
+                        <img src="{{ book.cover_image.url }}" class="img-fluid rounded" alt="{{ book.title }}">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <div class="card-body">
                             <h5 class="card-title">{{ book.title }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{ book.author }}</h6>
@@ -24,8 +24,9 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 
