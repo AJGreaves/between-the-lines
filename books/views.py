@@ -11,11 +11,13 @@ def book_list_view(request):
     books = Book.objects.all()
     for book in books:
         reviews = book.review_set.all()
+        book.review_count = reviews.count()
         average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
         if average_rating is not None:
             book.average_rating = round(average_rating)
         else:
             book.average_rating = 0
+        
     context = {
         'books': books,
     }
