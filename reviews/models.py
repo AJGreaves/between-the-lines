@@ -7,7 +7,8 @@ from books.models import Book
 class Review(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    review = models.TextField(max_length=4000)
+    title = models.CharField(max_length=100)
+    content = models.TextField(max_length=4000)
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )

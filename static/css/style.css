@@ -81,3 +81,21 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 #navbar .navbar-brand {
     font-size: 1.2rem;
 }
+
+/* reviews */
+
+.short-review, .full-review {
+    padding-top: .5rem;
+}
+
+/* hide full review until user interaction 
+   on short review opens it. */
+.full-review {
+    display: none;
+}
+
+.toggle-review {
+    padding: .5rem 0;
+    display: block;
+    cursor: pointer;
+}

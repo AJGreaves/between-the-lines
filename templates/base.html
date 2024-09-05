@@ -76,8 +76,11 @@
         crossorigin="anonymous"></script>
     <!-- font awesome kit -->
     <script src="https://kit.fontawesome.com/3b20d96fa9.js" crossorigin="anonymous"></script>
-    <!-- custom js -->
-    <script src="{% static 'js/script.js' %}"></script>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    {% block js %}{% endblock %}
+
 </body>
 
 </html>

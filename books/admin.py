@@ -1,6 +1,15 @@
 from django.contrib import admin
-from .models import Genre, Book
+from .models import Book, Genre
+from django.utils.text import slugify
 
-# Register your models here.
+class BookAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'genre', 'slug')
+    prepopulated_fields = {'slug': ('title',)}
+
+    def save_model(self, request, obj, form, change):
+        if not obj.slug:
+            obj.slug = slugify(obj.title)
+        super().save_model(request, obj, form, change)
+
+admin.site.register(Book, BookAdmin)
 admin.site.register(Genre)
-admin.site.register(Book)
