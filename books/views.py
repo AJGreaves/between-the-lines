@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.shortcuts import render
 from django.views.generic import ListView
 from django.shortcuts import render, get_object_or_404
@@ -15,8 +16,15 @@ class BookListView(ListView):
 def book_detail_view(request, pk, slug):
     book = get_object_or_404(Book, pk=pk)
     reviews = book.review_set.all()
+    average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+    if average_rating is not None:
+        average_rating = round(average_rating)
+    else:
+        average_rating = 0
+
     context = {
         'book': book,
-        'reviews': reviews
+        'reviews': reviews,
+        'average_rating': average_rating
     }
     return render(request, 'book_detail.html', context)

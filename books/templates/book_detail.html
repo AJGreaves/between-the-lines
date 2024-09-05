@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Between the Lines | {{ book.title }} by {{ book.author }} {% endblock %}
 
@@ -19,6 +20,17 @@
             <div class="card-body">
                 <h2 class="card-title">{{ book.title }}</h2>
                 <h3 class="card-subtitle mb-2 text-muted">{{ book.author }}</h3>
+
+                <div class="average-rating">
+                    {% for i in 1|to:5 %}
+                        {% if i <= average_rating %}
+                            <i class="fas fa-star gold"></i>
+                        {% else %}
+                            <i class="fas fa-star grey"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
                 <p class="card-text">{{ book.description }}</p>
                 <p class="card-text"><small class="text-muted">{{ book.genre.name }}</small></p>
                 <h2>Summary</h2>
