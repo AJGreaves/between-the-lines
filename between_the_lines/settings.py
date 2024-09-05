@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     # custom apps
     'books',
+    'reviews',
 ]
 
 SITE_ID = 1
