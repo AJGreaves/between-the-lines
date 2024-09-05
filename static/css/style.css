@@ -92,6 +92,14 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     font-size: 1.3rem;
 }
 
+#home .average-rating {
+    margin: .4rem 0;
+}
+
+#home .average-rating i {
+    font-size: 1rem;
+}
+
 .gold {
     color: #e59500;
 }

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Between the Lines | Home{% endblock %}
 
 {% block content %}
 
-<div class="container">
+<div id="home" class="container">
     <div class="row">
         <div class="col-md-8 mt-5">
             {% for book in books %}
@@ -22,6 +23,15 @@
                                 <a href="{% url 'book_detail' pk=book.pk slug=book.slug %}">{{book.title }}</a>
                             </h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{ book.author }}</h6>
+                            <div class="average-rating">
+                                {% for i in 1|to:5 %}
+                                    {% if i <= book.average_rating %}
+                                        <i class="fas fa-star gold"></i>
+                                    {% else %}
+                                        <i class="fas fa-star grey"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                             <p class="card-text">{{ book.description }}</p>
                             <p class="card-text"><small class="text-muted">{{ book.genre.name }}</small></p>
                         </div>

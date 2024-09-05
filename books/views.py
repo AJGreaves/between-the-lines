@@ -6,11 +6,20 @@ from .models import Book
 
 # Create your views here.
 
-# a ListView for home page that dispalys all the books
-class BookListView(ListView):
-    model = Book
-    template_name = 'index.html'
-    context_object_name = 'books'
+# a funciton based view for home page that dispalys all the books and their average ratings
+def book_list_view(request):
+    books = Book.objects.all()
+    for book in books:
+        reviews = book.review_set.all()
+        average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+        if average_rating is not None:
+            book.average_rating = round(average_rating)
+        else:
+            book.average_rating = 0
+    context = {
+        'books': books,
+    }
+    return render(request, 'index.html', context)
 
 # a function based view for each book that shows the book details and all its reviews
 def book_detail_view(request, pk, slug):
