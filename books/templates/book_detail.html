@@ -20,8 +20,8 @@
             <div class="card-body">
                 <h2 class="card-title">{{ book.title }}</h2>
                 <h3 class="card-subtitle mb-2 text-muted">{{ book.author }}</h3>
-
-                <div class="average-rating">
+                <!-- role and aria-label describe the ratine for screen readers -->
+                <div class="average-rating" role="img" aria-label="Average rating: {{ book.average_rating }} out of 5 stars">
                     {% for i in 1|to:5 %}
                         {% if i <= average_rating %}
                             <i class="fas fa-star gold"></i>
@@ -41,6 +41,17 @@
             <h2>Reviews</h2>
             {% for review in reviews %}
             <div class="card-body">
+                <div class="card-text">
+                    <p class="review-rating" role="img" aria-label="Review rating: {{ review.rating }} out of 5 stars">
+                        {% for i in 1|to:5 %}
+                            {% if i <= review.rating %}
+                                <i class="fas fa-star gold"></i>
+                            {% else %}
+                                <i class="fas fa-star grey"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
                 <h3 class="card-title">{{ review.title }} | <span class="text-muted">{{ review.user.username }}</span></h3>
                 <div class="review-preview">
                     <div class="short-review">{{ review.content|truncatewords:30 }}</div>
