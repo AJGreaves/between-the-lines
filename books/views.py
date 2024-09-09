@@ -27,6 +27,7 @@ def book_list_view(request):
 def book_detail_view(request, pk, slug):
     book = get_object_or_404(Book, pk=pk)
     reviews = book.review_set.all()
+    book.review_count = reviews.count()
     average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
     if average_rating is not None:
         average_rating = round(average_rating)

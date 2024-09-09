@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'cloudinary_storage',
     'cloudinary',
+    'crispy_forms',
+    'crispy_bootstrap5',
     # if adding summernote, it should go below here
 
     # custom apps
@@ -126,6 +128,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 

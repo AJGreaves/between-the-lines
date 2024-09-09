@@ -29,6 +29,12 @@
                             <i class="fas fa-star grey"></i>
                         {% endif %}
                     {% endfor %}
+                    <small class="text-muted ps-2">
+                        {% if book.review_count == 0 %}
+                            No reviews, yet.
+                        {% else %} 
+                            Average rating from {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %} 
+                        {% endif %}</small>
                 </div>
 
                 <p class="card-text">{{ book.description }}</p>
@@ -39,6 +45,13 @@
 
             <!-- reviews -->
             <h2>Reviews</h2>
+            <small class="text-muted">
+                {% if book.review_count == 0 %}
+                    No reviews, yet.
+                {% else %} 
+                    {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %} 
+                {% endif %}</small>
+                <hr>
             {% for review in reviews %}
             <div class="card-body">
                 <div class="card-text">
@@ -65,7 +78,7 @@
             </div>
             <hr>
             {% empty %}
-                <p>No reviews yet.</p>
+                <p>No reviews, yet.</p>
             {% endfor %}
         </div>
     </div>
