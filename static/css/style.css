@@ -108,6 +108,16 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     color: #7a7a7a;
 }
 
+/* selectable stars in review form */
+.star-rating .fa-star {
+    cursor: pointer;
+    color: #7a7a7a;
+}
+.star-rating .fa-star.selected,
+.star-rating .fa-star.hovered {
+    color: #e59500;
+}
+
 /* reviews */
 
 .short-review, .full-review {

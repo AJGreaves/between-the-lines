@@ -1,8 +1,9 @@
 from django.db.models import Avg
 from django.shortcuts import render
 from django.views.generic import ListView
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book
+from reviews.forms import ReviewForm
 
 # Create your views here.
 
@@ -34,9 +35,21 @@ def book_detail_view(request, pk, slug):
     else:
         average_rating = 0
 
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.book = book
+            review.user = request.user
+            review.save()
+            return redirect('book_detail', pk=book.pk, slug=book.slug)
+    else:
+        form = ReviewForm()
+
     context = {
         'book': book,
         'reviews': reviews,
-        'average_rating': average_rating
+        'average_rating': average_rating,
+        'form': form,
     }
     return render(request, 'book_detail.html', context)

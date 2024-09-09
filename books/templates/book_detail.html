@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
+{% load crispy_forms_tags %}
 
 {% block title %}Between the Lines | {{ book.title }} by {{ book.author }} {% endblock %}
 
@@ -13,7 +14,7 @@
             <img src="{{ book.cover_image.url }}" class="img-fluid rounded" alt="{{ book.title }}">
         </div>
 
-       
+
         <div class="col-12 col-sm-9">
 
             <!-- book info -->
@@ -21,20 +22,20 @@
                 <h2 class="card-title">{{ book.title }}</h2>
                 <h3 class="card-subtitle mb-2 text-muted">{{ book.author }}</h3>
                 <!-- role and aria-label describe the ratine for screen readers -->
-                <div class="average-rating" role="img" aria-label="Average rating: {{ book.average_rating }} out of 5 stars">
+                <div class="average-rating" role="img"
+                    aria-label="Average rating: {{ book.average_rating }} out of 5 stars">
                     {% for i in 1|to:5 %}
-                        {% if i <= average_rating %}
-                            <i class="fas fa-star gold"></i>
+                    {% if i <= average_rating %} <i class="fas fa-star gold"></i>
                         {% else %}
-                            <i class="fas fa-star grey"></i>
+                        <i class="fas fa-star grey"></i>
                         {% endif %}
-                    {% endfor %}
-                    <small class="text-muted ps-2">
-                        {% if book.review_count == 0 %}
+                        {% endfor %}
+                        <small class="text-muted ps-2">
+                            {% if book.review_count == 0 %}
                             No reviews, yet.
-                        {% else %} 
-                            Average rating from {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %} 
-                        {% endif %}</small>
+                            {% else %}
+                            Average rating from {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %}
+                            {% endif %}</small>
                 </div>
 
                 <p class="card-text">{{ book.description }}</p>
@@ -42,30 +43,60 @@
                 <h2>Summary</h2>
                 <p>{{ book.summary }}</p>
             </div>
+            <hr>
 
-            <!-- reviews -->
-            <h2>Reviews</h2>
+            <!-- review form -->
+            <h2 class="display-6">What do you think?</h2>
+
+            {% if user.is_authenticated %}
+            <form id="review-form" method="post">
+                {% csrf_token %}
+                <!-- custom star rating where users can select a star d-->
+                <div class="mb-3">
+                    <input id="rating" name="rating" type="number" hidden>
+                    <div class="star-rating" role="radiogroup" aria-labelledby="rating-label">
+                        <span id="rating-label" class="sr-only">Rating</span>
+                        {% for i in 1|to:5 %}
+                        <i class="fas fa-star" data-value="{{ i }}" role="radio" aria-checked="false" tabindex="0"
+                            aria-label="{{ i }} star"></i>
+                        {% endfor %}
+                        <span id="no-rating-feedback" class="text-danger ms-2"></span>
+                    </div>
+                </div>
+                {{ form.title|as_crispy_field }}
+                {{ form.content|as_crispy_field }}
+                <button type="submit" class="btn custom-btn-solid">Submit Review</button>
+            </form>
+            {% else %}
+            <p>
+                <a href="{% url 'account_login' %}?next={{ request.path }}" aria-label="Go to the log in page">Log
+                    in</a> to add your review.
+            </p>
+            {% endif %}
+            <hr>
+
+            <h2 class="display-5">Reviews</h2>
             <small class="text-muted">
                 {% if book.review_count == 0 %}
-                    No reviews, yet.
-                {% else %} 
-                    {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %} 
+                No reviews, yet.
+                {% else %}
+                {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %}
                 {% endif %}</small>
-                <hr>
+            <hr>
             {% for review in reviews %}
             <div class="card-body">
                 <div class="card-text">
                     <p class="review-rating" role="img" aria-label="Review rating: {{ review.rating }} out of 5 stars">
                         {% for i in 1|to:5 %}
-                            {% if i <= review.rating %}
-                                <i class="fas fa-star gold"></i>
+                        {% if i <= review.rating %} <i class="fas fa-star gold"></i>
                             {% else %}
-                                <i class="fas fa-star grey"></i>
+                            <i class="fas fa-star grey"></i>
                             {% endif %}
-                        {% endfor %}
+                            {% endfor %}
                     </p>
                 </div>
-                <h3 class="card-title">{{ review.title }} | <span class="text-muted">{{ review.user.username }}</span></h3>
+                <h3 class="card-title">{{ review.title }} | <span class="text-muted">{{ review.user.username }}</span>
+                </h3>
                 <div class="review-preview">
                     <div class="short-review">{{ review.content|truncatewords:30 }}</div>
                     <!-- linebreaksbr used to ensure user's line breaks are rendered 
@@ -73,12 +104,13 @@
                     <div class="full-review">{{ review.content|linebreaksbr }}</div>
                     <a href="#" class="toggle-review">Read more</a>
                 </div>
-                <p class="card-text"><small class="text-muted">{% if review.created_at.date != review.updated_at.date %} {{ review.created_at|date:"F j, Y" }}
-                    {% else %}{{ review.updated_at|date:"F j, Y" }}{% endif %}</small></p>
+                <p class="card-text"><small class="text-muted">{% if review.created_at.date != review.updated_at.date %}
+                        {{ review.created_at|date:"F j, Y" }}
+                        {% else %}{{ review.updated_at|date:"F j, Y" }}{% endif %}</small></p>
             </div>
             <hr>
             {% empty %}
-                <p>No reviews, yet.</p>
+            <p>No reviews, yet.</p>
             {% endfor %}
         </div>
     </div>
