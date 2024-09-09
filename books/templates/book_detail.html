@@ -112,11 +112,15 @@
                 <h3 class="card-title">{{ review.title }} | <span class="text-muted">{{ review.user.username }}</span>
                 </h3>
                 <div class="review-preview">
-                    <div class="short-review">{{ review.content|truncatewords:30 }}</div>
+                    <!-- show start of review up to 30 words -->
+                    <div class="short-review pb-2">{{ review.content|truncatewords:30 }}</div>
                     <!-- linebreaksbr used to ensure user's line breaks are rendered 
                          in the html by replacing them with <br> tags-->
-                    <div class="full-review">{{ review.content|linebreaksbr }}</div>
-                    <a href="#" class="toggle-review">Read more</a>
+                    <div class="full-review pb-2">{{ review.content|linebreaksbr }}</div>
+                    <!-- hide Read more link when truncated version is already the whole review -->
+                    {% if review.content|wordcount > 30 %}
+                        <a href="#" class="toggle-review pt-0">Read more</a>
+                    {% endif %}
                 </div>
                 <p class="card-text"><small class="text-muted">
                     {% if review.created_at.date != review.updated_at.date %}
