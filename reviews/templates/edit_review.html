@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}Between the Lines | {{ book.title }} by {{ book.author }} {% endblock %}
+
+{% block content %}
+
+<main class="container pt-4">
+    <div class="row">
+        <!-- Book image -->
+        <div class="col-12 col-sm-3 text-center">
+            <img src="{{ book.cover_image.url }}" class="img-fluid rounded" alt="{{ book.title }}">
+        </div>
+
+
+        <div class="col-12 col-sm-9">
+
+            <!-- book info -->
+            <div class="card-body">
+                <h2 class="card-title">{{ book.title }}</h2>
+                <h3 class="card-subtitle mb-2 text-muted">{{ book.author }}</h3>
+                <!-- role and aria-label describe the rating for screen readers -->
+                <div class="average-rating" role="img"
+                    aria-label="Average rating: {{ book.average_rating }} out of 5 stars">
+                    {% for i in 1|to:5 %}
+                        {% if i <= average_rating %}
+                            <i class="fas fa-star gold"></i>
+                        {% else %}
+                            <i class="fas fa-star grey"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <p class="card-text">{{ book.description }}</p>
+                <p class="card-text"><small class="text-muted">{{ book.genre.name }}</small></p>
+                <h2>Summary</h2>
+                <p>{{ book.summary }}</p>
+            </div>
+
+            <hr>
+            <!-- review form -->
+            <h2 class="display-6">Edit your review</h2>
+            <form id="review-form" method="post">
+                {% csrf_token %}
+                <!-- custom star rating where users can select a star d-->
+                <div class="mb-3">
+                    <input id="rating" name="rating" type="number" hidden>
+                    <div class="star-rating" role="radiogroup" aria-labelledby="rating-label" data-current-rating="{{ review.rating }}">
+                        <span id="rating-label" class="sr-only">Rating</span>
+                        {% for i in 1|to:5 %}
+                        <i class="fas fa-star" data-value="{{ i }}" role="radio" aria-checked="false" tabindex="0"
+                            aria-label="{{ i }} star"></i>
+                        {% endfor %}
+                        <span id="no-rating-feedback" class="text-danger ms-2"></span>
+                    </div>
+                </div>
+                {{ form.title|as_crispy_field }}
+                {{ form.content|as_crispy_field }}
+                <button type="submit" class="btn custom-btn-solid">Update Review</button>
+            </form>
+            <hr>
+        </div>
+    </div>
+
+</main>
+
+{% endblock %}
+
+{% block js %}
+<!-- custom js -->
+<script src="{% static 'js/book-detail.js' %}"></script>
+{% endblock %}

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const ratingInput = document.getElementById('rating');
     const reviewForm = document.getElementById('review-form');
     const ratingFeedbackElm = document.getElementById('no-rating-feedback');
-    const deleteButtons = document.querySelectorAll('.delete-review-btn');
+    const deleteButtons = document.getElementById('delete-review-btn');
 
     toggleReviewElements.forEach(function (element) {
         element.addEventListener('click', function (e) {
@@ -68,16 +68,36 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function (event) {
-            event.preventDefault();
-            const reviewId = this.getAttribute('data-review-id');
-            const confirmDelete = confirm('Are you sure you want to delete this review?');
+    if (deleteButtons) {
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const reviewId = this.getAttribute('data-review-id');
+                const confirmDelete = confirm('Are you sure you want to delete this review?');
 
-            if (confirmDelete) {
-                // Redirect to the delete review URL
-                window.location.href = `/reviews/delete_review/${reviewId}/`;
-            }
+                if (confirmDelete) {
+                    // Redirect to the delete review URL
+                    window.location.href = `/reviews/delete_review/${reviewId}/`;
+                }
+            });
         });
-    });
+    }
+
+
+    // Function to set the initial state of the stars based on the existing rating
+    function setInitialRating() {
+        const starRatingContainer = document.querySelector('.star-rating');
+        const currentRating = starRatingContainer.getAttribute('data-current-rating');
+        if (currentRating) {
+            ratingInput.value = currentRating;
+            stars.forEach(star => {
+                const starValue = star.getAttribute('data-value');
+                if (starValue <= currentRating) {
+                    star.classList.add('selected');
+                }
+            });
+        }
+    }
+
+    setInitialRating();
 });
