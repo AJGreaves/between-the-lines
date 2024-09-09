@@ -110,6 +110,12 @@
                 <p class="card-text"><small class="text-muted">{% if review.created_at.date != review.updated_at.date %}
                         {{ review.created_at|date:"F j, Y" }}
                         {% else %}{{ review.updated_at|date:"F j, Y" }}{% endif %}</small></p>
+
+                        {% if review == user_review %}
+                        <button class="btn btn-secondary delete-review-btn btn-sm" data-review-id="{{ user_review.id }}" aria-label="Delete Review" title="Delete review">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    {% endif %}
             </div>
             <hr>
             {% empty %}

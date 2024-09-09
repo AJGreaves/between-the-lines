@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const ratingInput = document.getElementById('rating');
     const reviewForm = document.getElementById('review-form');
     const ratingFeedbackElm = document.getElementById('no-rating-feedback');
+    const deleteButtons = document.querySelectorAll('.delete-review-btn');
 
     toggleReviewElements.forEach(function (element) {
         element.addEventListener('click', function (e) {
@@ -58,10 +59,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    reviewForm.addEventListener('submit', function (e) {
-        if (!ratingInput.value) {
-            e.preventDefault();
-            ratingFeedbackElm.innerText = 'Please select a rating';
-        }
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function (e) {
+            if (!ratingInput.value) {
+                e.preventDefault();
+                ratingFeedbackElm.innerText = 'Please select a rating';
+            }
+        });
+    }
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            const reviewId = this.getAttribute('data-review-id');
+            const confirmDelete = confirm('Are you sure you want to delete this review?');
+
+            if (confirmDelete) {
+                // Redirect to the delete review URL
+                window.location.href = `/reviews/delete_review/${reviewId}/`;
+            }
+        });
     });
 });
