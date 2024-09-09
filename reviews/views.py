@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
 from django.urls import reverse
@@ -11,13 +12,14 @@ def delete_review(request, review_id):
     book_pk = review.book.pk
     book_slug = review.book.slug
     review.delete()
+    messages.success(request, 'Your review has been deleted successfully!')
     return redirect(reverse('book_detail', kwargs={'pk': book_pk, 'slug': book_slug}))
 
 @login_required
 def edit_review(request, review_id, slug):
     review = get_object_or_404(Review, id=review_id, user=request.user)
     book = review.book
-    average_rating = book.review_set.aggregate(Avg('rating'))['rating__avg']
+    average_rating = book.reviews.aggregate(Avg('rating'))['rating__avg']
     if average_rating is not None:
         average_rating = round(average_rating)
     else:
@@ -27,6 +29,7 @@ def edit_review(request, review_id, slug):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Your review has been updated successfully!')
             return redirect('book_detail', pk=review.book.pk, slug=review.book.slug)
     else:
         form = ReviewForm(instance=review)

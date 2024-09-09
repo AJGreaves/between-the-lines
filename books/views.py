@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models import Avg
 from django.shortcuts import render
 from django.views.generic import ListView
@@ -29,7 +30,7 @@ def book_list_view(request):
 # a function based view for each book that shows the book details and all its reviews
 def book_detail_view(request, pk, slug):
     book = get_object_or_404(Book, pk=pk)
-    reviews = book.review_set.all()
+    reviews = book.reviews.all()
     book.review_count = reviews.count()
     average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
     if average_rating is not None:
@@ -40,7 +41,7 @@ def book_detail_view(request, pk, slug):
     # check if the user has already reviewed the book, if so, display their review first
     user_review = None
     if request.user.is_authenticated:
-        user_review = book.review_set.filter(user=request.user).first()
+        user_review = book.reviews.filter(user=request.user).first()
         if user_review:
             reviews = [user_review] + [review for review in reviews if review != user_review]
 
@@ -51,6 +52,7 @@ def book_detail_view(request, pk, slug):
             review.book = book
             review.user = request.user
             review.save()
+            messages.success(request, 'Your review has been submitted successfully!')
             return redirect('book_detail', pk=book.pk, slug=book.slug)
     else:
         form = ReviewForm()
