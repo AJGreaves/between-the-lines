@@ -19,6 +19,16 @@ class Book(models.Model):
     genre = models.ForeignKey(Genre, related_name="books", on_delete=models.CASCADE)
     cover_image = CloudinaryField('image', blank=False, null=False)
     slug = models.SlugField(unique=True, blank=False, null=False)
+    average_rating = models.FloatField(default=0)
+
+    def update_average_rating(self):
+        reviews = self.reviews.all()
+        average_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
+        if average_rating is not None:
+            self.average_rating = round(average_rating, 2)
+        else:
+            self.average_rating = 0
+        self.save()
 
     def save(self, *args, **kwargs):
         if not self.slug:

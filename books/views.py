@@ -9,9 +9,11 @@ from reviews.forms import ReviewForm
 
 # a funciton based view for home page that dispalys all the books and their average ratings
 def book_list_view(request):
-    books = Book.objects.all()
+    # Sort books by average rating (descending) and title (ascending)
+    books = Book.objects.all().order_by('-average_rating', 'title')
+    
     for book in books:
-        reviews = book.review_set.all()
+        reviews = book.reviews.all()
         book.review_count = reviews.count()
         average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
         if average_rating is not None:
@@ -34,7 +36,7 @@ def book_detail_view(request, pk, slug):
         average_rating = round(average_rating)
     else:
         average_rating = 0
-
+    reviews = reviews.order_by('-updated_at')
     # check if the user has already reviewed the book, if so, display their review first
     user_review = None
     if request.user.is_authenticated:

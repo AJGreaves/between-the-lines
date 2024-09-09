@@ -71,6 +71,8 @@
                 </form>
                 {% endif %}
             {% else %}
+            <hr>
+            <h2 class="display-6">What do you think?</h2>
             <p>
                 <a href="{% url 'account_login' %}?next={{ request.path }}" aria-label="Go to the log in page">Log
                     in</a> to add your review.
@@ -80,9 +82,7 @@
 
             <h2 class="display-5">Reviews</h2>
             <small class="text-muted">
-                {% if book.review_count == 0 %}
-                No reviews, yet.
-                {% else %}
+                {% if book.review_count != 0 %}
                 {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %}
                 {% endif %}</small>
             <hr>
@@ -123,15 +123,9 @@
                     {% endif %}
                 </div>
                 <p class="card-text"><small class="text-muted">
-                    {% if review.created_at.date != review.updated_at.date %}
-                        {{ review.created_at|date:"F j, Y" }}
-                    {% else %}
-                        {{ review.updated_at|date:"F j, Y" }}
-                    {% endif %}</small></p>
+                    {{ review.updated_at|date:"F j, Y" }}</small></p>
             </div>
             <hr>
-            {% empty %}
-            <p>No reviews, yet.</p>
             {% endfor %}
         </div>
     </div>

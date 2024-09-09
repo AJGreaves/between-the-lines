@@ -5,6 +5,7 @@ from django.utils.text import slugify
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'genre', 'slug')
     prepopulated_fields = {'slug': ('title',)}
+    exclude = ('average_rating',)
 
     def save_model(self, request, obj, form, change):
         if not obj.slug:
