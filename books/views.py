@@ -1,7 +1,6 @@
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.db.models import Avg
-from django.shortcuts import render
-from django.views.generic import ListView
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book
 from reviews.forms import ReviewForm
@@ -21,9 +20,13 @@ def book_list_view(request):
             book.average_rating = round(average_rating)
         else:
             book.average_rating = 0
+
+    paginator = Paginator(books, 10)  # Show 10 books per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
         
     context = {
-        'books': books,
+        'page_obj': page_obj,
     }
     return render(request, 'index.html', context)
 
