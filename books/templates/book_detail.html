@@ -88,15 +88,26 @@
             <hr>
             {% for review in reviews %}
             <div class="card-body">
-                <div class="card-text">
-                    <p class="review-rating" role="img" aria-label="Review rating: {{ review.rating }} out of 5 stars">
+                <div class="card-text d-flex justify-content-between align-items-center">
+                    <p class="review-rating my-2" role="img" aria-label="Review rating: {{ review.rating }} out of 5 stars">
                         {% for i in 1|to:5 %}
-                        {% if i <= review.rating %} <i class="fas fa-star gold"></i>
+                            {% if i <= review.rating %}
+                                <i class="fas fa-star gold"></i>
                             {% else %}
-                            <i class="fas fa-star grey"></i>
+                                <i class="fas fa-star grey"></i>
                             {% endif %}
-                            {% endfor %}
+                        {% endfor %}
                     </p>
+                    {% if review == user_review %}
+                        <div>
+                            <a href="{% url 'edit_review' review_id=user_review.id slug=book.slug %}" class="btn btn-secondary edit-review-btn btn-sm" aria-label="Edit Review" title="Edit review">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button id="delete-review-btn" class="btn btn-secondary btn-sm" data-review-id="{{ user_review.id }}" aria-label="Delete Review" title="Delete review">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    {% endif %}
                 </div>
                 <h3 class="card-title">{{ review.title }} | <span class="text-muted">{{ review.user.username }}</span>
                 </h3>
@@ -107,18 +118,12 @@
                     <div class="full-review">{{ review.content|linebreaksbr }}</div>
                     <a href="#" class="toggle-review">Read more</a>
                 </div>
-                <p class="card-text"><small class="text-muted">{% if review.created_at.date != review.updated_at.date %}
+                <p class="card-text"><small class="text-muted">
+                    {% if review.created_at.date != review.updated_at.date %}
                         {{ review.created_at|date:"F j, Y" }}
-                        {% else %}{{ review.updated_at|date:"F j, Y" }}{% endif %}</small></p>
-
-                        {% if review == user_review %}
-                        <a href="{% url 'edit_review' review_id=user_review.id slug=book.slug %}" class="btn btn-secondary edit-review-btn btn-sm" aria-label="Edit Review" title="Edit review"></button>
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button id="delete-review-btn" class="btn btn-secondary btn-sm" data-review-id="{{ user_review.id }}" aria-label="Delete Review" title="Delete review">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    {% endif %}
+                    {% else %}
+                        {{ review.updated_at|date:"F j, Y" }}
+                    {% endif %}</small></p>
             </div>
             <hr>
             {% empty %}
