@@ -35,6 +35,13 @@ def book_detail_view(request, pk, slug):
     else:
         average_rating = 0
 
+    # check if the user has already reviewed the book, if so, display their review first
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = book.review_set.filter(user=request.user).first()
+        if user_review:
+            reviews = [user_review] + [review for review in reviews if review != user_review]
+
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -51,5 +58,6 @@ def book_detail_view(request, pk, slug):
         'reviews': reviews,
         'average_rating': average_rating,
         'form': form,
+        'user_review': user_review,
     }
     return render(request, 'book_detail.html', context)

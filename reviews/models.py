@@ -15,5 +15,8 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ('user', 'book')
+
     def __str__(self):
         return f"{self.rating} star review of {self.book.title} by {self.user.username}"

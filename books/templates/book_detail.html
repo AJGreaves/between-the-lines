@@ -25,17 +25,19 @@
                 <div class="average-rating" role="img"
                     aria-label="Average rating: {{ book.average_rating }} out of 5 stars">
                     {% for i in 1|to:5 %}
-                    {% if i <= average_rating %} <i class="fas fa-star gold"></i>
+                        {% if i <= average_rating %}
+                            <i class="fas fa-star gold"></i>
                         {% else %}
-                        <i class="fas fa-star grey"></i>
+                            <i class="fas fa-star grey"></i>
                         {% endif %}
-                        {% endfor %}
-                        <small class="text-muted ps-2">
-                            {% if book.review_count == 0 %}
+                    {% endfor %}
+                    <small class="text-muted ps-2">
+                        {% if book.review_count == 0 %}
                             No reviews, yet.
-                            {% else %}
+                        {% else %}
                             Average rating from {{ book.review_count }} review{% if book.review_count > 1 %}s{% endif %}
-                            {% endif %}</small>
+                        {% endif %}
+                    </small>
                 </div>
 
                 <p class="card-text">{{ book.description }}</p>
@@ -43,30 +45,31 @@
                 <h2>Summary</h2>
                 <p>{{ book.summary }}</p>
             </div>
-            <hr>
-
-            <!-- review form -->
-            <h2 class="display-6">What do you think?</h2>
 
             {% if user.is_authenticated %}
-            <form id="review-form" method="post">
-                {% csrf_token %}
-                <!-- custom star rating where users can select a star d-->
-                <div class="mb-3">
-                    <input id="rating" name="rating" type="number" hidden>
-                    <div class="star-rating" role="radiogroup" aria-labelledby="rating-label">
-                        <span id="rating-label" class="sr-only">Rating</span>
-                        {% for i in 1|to:5 %}
-                        <i class="fas fa-star" data-value="{{ i }}" role="radio" aria-checked="false" tabindex="0"
-                            aria-label="{{ i }} star"></i>
-                        {% endfor %}
-                        <span id="no-rating-feedback" class="text-danger ms-2"></span>
+                {% if not user_review %}
+                <hr>
+                <!-- review form -->
+                <h2 class="display-6">What do you think?</h2>
+                <form id="review-form" method="post">
+                    {% csrf_token %}
+                    <!-- custom star rating where users can select a star d-->
+                    <div class="mb-3">
+                        <input id="rating" name="rating" type="number" hidden>
+                        <div class="star-rating" role="radiogroup" aria-labelledby="rating-label">
+                            <span id="rating-label" class="sr-only">Rating</span>
+                            {% for i in 1|to:5 %}
+                            <i class="fas fa-star" data-value="{{ i }}" role="radio" aria-checked="false" tabindex="0"
+                                aria-label="{{ i }} star"></i>
+                            {% endfor %}
+                            <span id="no-rating-feedback" class="text-danger ms-2"></span>
+                        </div>
                     </div>
-                </div>
-                {{ form.title|as_crispy_field }}
-                {{ form.content|as_crispy_field }}
-                <button type="submit" class="btn custom-btn-solid">Submit Review</button>
-            </form>
+                    {{ form.title|as_crispy_field }}
+                    {{ form.content|as_crispy_field }}
+                    <button type="submit" class="btn custom-btn-solid">Submit Review</button>
+                </form>
+                {% endif %}
             {% else %}
             <p>
                 <a href="{% url 'account_login' %}?next={{ request.path }}" aria-label="Go to the log in page">Log
