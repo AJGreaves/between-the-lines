@@ -33,15 +33,11 @@ def book_list_view(request):
 
 # a function based view for each book that shows the book details and all its reviews
 def book_detail_view(request, pk, slug):
-    book = get_object_or_404(Book, pk=pk)
-    reviews = book.reviews.all()
+    book = get_object_or_404(Book, pk=pk, slug=slug)
+    reviews = book.reviews.order_by('-updated_at')
     book.review_count = reviews.count()
-    average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
-    if average_rating is not None:
-        average_rating = round(average_rating)
-    else:
-        average_rating = 0
-    reviews = reviews.order_by('-updated_at')
+    average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+
     # check if the user has already reviewed the book, if so, display their review first
     user_review = None
     if request.user.is_authenticated:
@@ -58,6 +54,8 @@ def book_detail_view(request, pk, slug):
             review.save()
             messages.success(request, 'Your review has been submitted successfully!')
             return redirect('book_detail', pk=book.pk, slug=book.slug)
+        else:
+            print(form.errors)  # Debugging: Print form errors
     else:
         form = ReviewForm()
 
