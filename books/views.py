@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Book
+from .models import Book, Genre
 from reviews.forms import ReviewForm
 
 # Create your views here.
@@ -68,3 +68,26 @@ def book_detail_view(request, pk, slug):
         'user_review': user_review,
     }
     return render(request, 'book_detail.html', context)
+
+def books_by_genre_view(request, genre_id):
+    genre = get_object_or_404(Genre, id=genre_id)
+    books = Book.objects.filter(genre=genre).order_by('-average_rating', 'title')
+    
+    for book in books:
+        reviews = book.reviews.all()
+        book.review_count = reviews.count()
+        average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+        if average_rating is not None:
+            book.average_rating = round(average_rating)
+        else:
+            book.average_rating = 0
+
+    paginator = Paginator(books, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'genre': genre,
+    }
+    return render(request, 'books_by_genre.html', context)

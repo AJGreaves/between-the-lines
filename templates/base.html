@@ -40,11 +40,12 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            Browse books
+                            Books by Genre
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">By highest rated</a></li>
-                            <li><a class="dropdown-item" href="#">By Genre</a></li>
+                            {% for genre in genres %}
+                                <li><a class="dropdown-item" href="{% url 'books_by_genre' genre.id %}">{{ genre.name }}</a></li>
+                            {% endfor %}
                         </ul>
                     </li>
                     {% if user.is_authenticated %}
