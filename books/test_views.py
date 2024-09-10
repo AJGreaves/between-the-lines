@@ -128,3 +128,94 @@ class BookDetailViewTestCase(TestCase):
         url = reverse('book_detail', args=[self.book.pk, self.book.slug])
         response = self.client.get(url)
         self.assertNotContains(response, '<form id="review-form"')  # Ensure the form is not present in the response
+
+
+class BooksByGenreViewTestCase(TestCase):
+    def setUp(self):
+        # Create a genre and some books
+        self.genre = Genre.objects.create(name="Fiction", slug="fiction")
+        self.empty_genre = Genre.objects.create(name="Non-Fiction", slug="non-fiction")
+        self.books = [
+            Book.objects.create(
+                title=f"Book {i}",
+                genre=self.genre,
+                average_rating=4.5
+            ) for i in range(1, 12)  # Create 11 books
+        ]
+
+    def test_books_by_genre_view_status_code(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_books_by_genre_view_invalid_genre(self):
+        url = reverse('books_by_genre', args=['non-existent-genre'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_books_by_genre_view_template(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, 'books_by_genre.html')
+
+    def test_books_by_genre_view_context_data(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertIn('genre', response.context)
+        self.assertEqual(response.context['genre'], self.genre)
+
+    def test_books_by_genre_view_page_obj(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertIn('page_obj', response.context)
+        self.assertTrue(hasattr(response.context['page_obj'], 'object_list'))
+
+    def test_books_by_genre_view_total_books(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertIn('total_books', response.context)
+        self.assertEqual(response.context['total_books'], 11)
+
+    def test_books_by_genre_view_num_pages(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertIn('num_pages', response.context)
+        self.assertEqual(response.context['num_pages'], response.context['page_obj'].paginator.num_pages)
+
+    def test_books_by_genre_view_ordering(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        books = list(response.context['page_obj'].object_list)
+        expected_order = sorted(self.books, key=lambda x: (-x.average_rating, x.title))
+        self.assertEqual(books, expected_order[:10])  # First 10 books
+
+    def test_books_by_genre_view_pagination(self):
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertIn('page_obj', response.context)
+        self.assertEqual(len(response.context['page_obj'].object_list), 10)  # 10 books per page
+        self.assertEqual(response.context['page_obj'].paginator.num_pages, 2)  # 2 pages
+
+    def test_books_by_genre_view_empty_genre(self):
+        url = reverse('books_by_genre', args=[self.empty_genre.slug])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('page_obj', response.context)
+        self.assertEqual(len(response.context['page_obj'].object_list), 0)  # No books in this genre
+        self.assertEqual(response.context['total_books'], 0)
+
+    def test_books_by_genre_view_large_number_of_books(self):
+        # Create a large number of books
+        for i in range(12, 102):  # Create 90 more books, total 101
+            Book.objects.create(
+                title=f"Book {i}",
+                genre=self.genre,
+                average_rating=4.5 if i % 2 == 0 else 4.0
+            )
+        url = reverse('books_by_genre', args=[self.genre.slug])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('page_obj', response.context)
+        self.assertEqual(len(response.context['page_obj'].object_list), 10)  # 10 books per page
+        self.assertEqual(response.context['page_obj'].paginator.num_pages, 11)  # 101 books, 11 pages
+    

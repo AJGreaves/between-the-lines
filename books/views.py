@@ -54,8 +54,6 @@ def book_detail_view(request, pk, slug):
             review.save()
             messages.success(request, 'Your review has been submitted successfully!')
             return redirect('book_detail', pk=book.pk, slug=book.slug)
-        else:
-            print(form.errors)  # Debugging: Print form errors
     else:
         form = ReviewForm()
 
