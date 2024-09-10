@@ -2,6 +2,7 @@
 from books.models import Genre
 
 def genres(request):
+    genres_with_books = Genre.objects.filter(books__isnull=False).distinct()
     return {
-        'genres': Genre.objects.all()
+        'genres': genres_with_books
     }

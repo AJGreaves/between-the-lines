@@ -19,5 +19,5 @@ from .views import book_detail_view, books_by_genre_view
 
 urlpatterns = [
     path('<int:pk>/<slug:slug>/', book_detail_view, name='book_detail'),
-    path('genre/<int:genre_id>/', books_by_genre_view, name='books_by_genre'),
+    path('genre/<slug:slug>/', books_by_genre_view, name='books_by_genre'),
 ]

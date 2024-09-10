@@ -27,6 +27,7 @@ def book_list_view(request):
         
     context = {
         'page_obj': page_obj,
+        'num_pages': paginator.num_pages,
     }
     return render(request, 'index.html', context)
 
@@ -69,8 +70,8 @@ def book_detail_view(request, pk, slug):
     }
     return render(request, 'book_detail.html', context)
 
-def books_by_genre_view(request, genre_id):
-    genre = get_object_or_404(Genre, id=genre_id)
+def books_by_genre_view(request, slug):
+    genre = get_object_or_404(Genre, slug=slug)
     books = Book.objects.filter(genre=genre).order_by('-average_rating', 'title')
     
     for book in books:
@@ -89,5 +90,7 @@ def books_by_genre_view(request, genre_id):
     context = {
         'page_obj': page_obj,
         'genre': genre,
+        'total_books': books.count(), 
+        'num_pages': paginator.num_pages,
     }
     return render(request, 'books_by_genre.html', context)

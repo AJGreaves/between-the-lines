@@ -44,7 +44,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% for genre in genres %}
-                                <li><a class="dropdown-item" href="{% url 'books_by_genre' genre.id %}">{{ genre.name }}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'books_by_genre' genre.slug %}">{{ genre.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </li>
