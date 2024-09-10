@@ -6,7 +6,12 @@ from cloudinary.models import CloudinaryField
 # Create your models here.
 class Genre(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -18,7 +23,7 @@ class Book(models.Model):
     summary = models.TextField(max_length=1000)
     genre = models.ForeignKey(Genre, related_name="books", on_delete=models.CASCADE)
     cover_image = CloudinaryField('image', blank=False, null=False)
-    slug = models.SlugField(unique=True, blank=False, null=False)
+    slug = models.SlugField(unique=True, blank=True)
     average_rating = models.FloatField(default=0)
 
     def update_average_rating(self):
