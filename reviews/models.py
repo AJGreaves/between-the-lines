@@ -20,7 +20,7 @@ class Review(models.Model):
         unique_together = ('user', 'book')
 
     def clean(self):
-        if not (1 <= self.rating <= 5):
+        if self.rating is None or not (1 <= self.rating <= 5):
             raise ValidationError('Rating must be between 1 and 5')
 
     def save(self, *args, **kwargs):
