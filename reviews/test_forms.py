@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .forms import ReviewForm
 
+
 class ReviewFormTestCase(TestCase):
     def test_valid_form(self):
         form_data = {
@@ -20,7 +21,9 @@ class ReviewFormTestCase(TestCase):
         form = ReviewForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn('rating', form.errors)
-        self.assertEqual(form.errors['rating'], ['Ensure this value is less than or equal to 5.'])
+        self.assertEqual(
+            form.errors['rating'],
+            ['Ensure this value is less than or equal to 5.'])
 
     def test_missing_title(self):
         form_data = {

@@ -4,6 +4,7 @@ from django.test import TestCase
 from books.models import Book, Genre
 from .models import Review
 
+
 class ReviewModelTestCase(TestCase):
     def setUp(self):
         self.genre = Genre.objects.create(name="Fiction")
@@ -15,7 +16,8 @@ class ReviewModelTestCase(TestCase):
             summary="A test book summary",
             cover_image="image_url"
         )
-        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.user = User.objects.create_user(
+            username='testuser', password='12345')
 
     def test_review_creation(self):
         review = Review.objects.create(
@@ -68,7 +70,9 @@ class ReviewModelTestCase(TestCase):
             content="This is a great book!",
             rating=5
         )
-        self.assertEqual(str(review), f"5 star review of {self.book.title} by {self.user.username}")
+        self.assertEqual(
+            str(review),
+            f"5 star review of {self.book.title} by {self.user.username}")
 
     def test_average_rating_update(self):
         Review.objects.create(
@@ -81,7 +85,8 @@ class ReviewModelTestCase(TestCase):
         self.book.refresh_from_db()
         self.assertEqual(self.book.average_rating, 5.0)
 
-        new_user = User.objects.create_user(username='newuser', password='12345')
+        new_user = User.objects.create_user(
+            username='newuser', password='12345')
         Review.objects.create(
             book=self.book,
             user=new_user,
