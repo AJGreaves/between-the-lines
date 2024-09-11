@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
@@ -17,6 +18,10 @@ class Review(models.Model):
 
     class Meta:
         unique_together = ('user', 'book')
+
+    def clean(self):
+        if not (1 <= self.rating <= 5):
+            raise ValidationError('Rating must be between 1 and 5')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
