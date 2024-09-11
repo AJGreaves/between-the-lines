@@ -5,13 +5,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book, Genre
 from reviews.forms import ReviewForm
 
-# Create your views here.
 
-# a funciton based view for home page that dispalys all the books and their average ratings
 def book_list_view(request):
-    # Sort books by average rating (descending) and title (ascending)
+    """
+    Function based view for home page that displays
+    all the books and their average ratings
+    Sorts books by average rating (descending) and title (ascending)
+    Paginates results by 10 books per page
+    """
     books = Book.objects.all().order_by('-average_rating', 'title')
-    
+
     for book in books:
         reviews = book.reviews.all()
         book.review_count = reviews.count()
@@ -21,29 +24,37 @@ def book_list_view(request):
         else:
             book.average_rating = 0
 
-    paginator = Paginator(books, 10)  # Show 10 books per page
+    paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-        
+
     context = {
         'page_obj': page_obj,
         'num_pages': paginator.num_pages,
     }
     return render(request, 'index.html', context)
 
-# a function based view for each book that shows the book details and all its reviews
+
 def book_detail_view(request, pk, slug):
+    """
+    Function based view for each book that shows
+    the book details and all its reviews.
+    checks if the user has already reviewed the book,
+    if so, display their review first.
+    Validates and saves review form after submission.
+    """
     book = get_object_or_404(Book, pk=pk, slug=slug)
     reviews = book.reviews.order_by('-updated_at')
     book.review_count = reviews.count()
     average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
 
-    # check if the user has already reviewed the book, if so, display their review first
     user_review = None
     if request.user.is_authenticated:
         user_review = book.reviews.filter(user=request.user).first()
         if user_review:
-            reviews = [user_review] + [review for review in reviews if review != user_review]
+            reviews = [user_review] + [
+                review for review in reviews if review != user_review
+            ]
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -52,7 +63,8 @@ def book_detail_view(request, pk, slug):
             review.book = book
             review.user = request.user
             review.save()
-            messages.success(request, 'Your review has been submitted successfully!')
+            messages.success(
+                request, 'Your review has been submitted successfully!')
             return redirect('book_detail', pk=book.pk, slug=book.slug)
     else:
         form = ReviewForm()
@@ -66,10 +78,19 @@ def book_detail_view(request, pk, slug):
     }
     return render(request, 'book_detail.html', context)
 
+
 def books_by_genre_view(request, slug):
+    """
+    Function based view for books by genre. Displays
+    all books of a particular genre.
+    Sorts books by average rating (descending) and title (ascending)
+    Paginates results by 10 books per page
+    """
+
     genre = get_object_or_404(Genre, slug=slug)
-    books = Book.objects.filter(genre=genre).order_by('-average_rating', 'title')
-    
+    books = Book.objects.filter(
+        genre=genre).order_by('-average_rating', 'title')
+
     for book in books:
         reviews = book.reviews.all()
         book.review_count = reviews.count()
@@ -82,11 +103,11 @@ def books_by_genre_view(request, slug):
     paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+
     context = {
         'page_obj': page_obj,
         'genre': genre,
-        'total_books': books.count(), 
+        'total_books': books.count(),
         'num_pages': paginator.num_pages,
     }
     return render(request, 'books_by_genre.html', context)

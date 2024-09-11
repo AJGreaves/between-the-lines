@@ -4,11 +4,13 @@ from .models import Genre, Book
 from reviews.models import Review
 from django.utils.text import slugify
 
+
 class GenreModelTestCase(TestCase):
     def setUp(self):
         self.genre_name = "Science Fiction"
         self.genre = Genre.objects.create(name=self.genre_name)
-        self.user = User.objects.create_user(username="testuser", password="password")
+        self.user = User.objects.create_user(
+            username="testuser", password="password")
 
     def test_genre_creation(self):
         self.assertEqual(self.genre.name, self.genre_name)
@@ -28,6 +30,7 @@ class GenreModelTestCase(TestCase):
     def test_string_representation(self):
         self.assertEqual(str(self.genre), self.genre_name)
 
+
 class BookModelTestCase(TestCase):
     def setUp(self):
         self.genre = Genre.objects.create(name="Fiction")
@@ -40,8 +43,10 @@ class BookModelTestCase(TestCase):
             summary="A test book summary",
             cover_image="image_url"
         )
-        self.user1 = User.objects.create_user(username='user1', password='password')
-        self.user2 = User.objects.create_user(username='user2', password='password')
+        self.user1 = User.objects.create_user(
+            username='user1', password='password')
+        self.user2 = User.objects.create_user(
+            username='user2', password='password')
 
     def test_book_creation(self):
         self.assertEqual(self.book.title, self.book_title)
@@ -78,7 +83,9 @@ class BookModelTestCase(TestCase):
 
     def test_update_average_rating(self):
         # Create some reviews for the book
-        Review.objects.create(book=self.book, user=self.user1, rating=4, content="Good book")
-        Review.objects.create(book=self.book, user=self.user2, rating=5, content="Great book")
+        Review.objects.create(
+            book=self.book, user=self.user1, rating=4, content="Good book")
+        Review.objects.create(
+            book=self.book, user=self.user2, rating=5, content="Great book")
         self.book.update_average_rating()
         self.assertEqual(self.book.average_rating, 4.5)
