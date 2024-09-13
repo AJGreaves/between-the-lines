@@ -10,10 +10,10 @@ def book_list_view(request):
     """
     Function based view for home page that displays
     all the books and their average ratings
-    Sorts books by average rating (descending) and title (ascending)
+    Sorts books by average rating (descending) and number of ratings (descending)
     Paginates results by 10 books per page
     """
-    books = Book.objects.all().order_by('-average_rating', 'title')
+    books = Book.objects.all()
 
     for book in books:
         reviews = book.reviews.all()
@@ -23,6 +23,8 @@ def book_list_view(request):
             book.average_rating = round(average_rating)
         else:
             book.average_rating = 0
+
+    books = sorted(books, key=lambda b: (-b.average_rating, -b.review_count))
 
     paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
@@ -83,7 +85,7 @@ def books_by_genre_view(request, slug):
     """
     Function based view for books by genre. Displays
     all books of a particular genre.
-    Sorts books by average rating (descending) and title (ascending)
+    Sorts books by average rating (descending) and number of ratings (descending)
     Paginates results by 10 books per page
     """
 
@@ -99,6 +101,8 @@ def books_by_genre_view(request, slug):
             book.average_rating = round(average_rating)
         else:
             book.average_rating = 0
+
+    books = sorted(books, key=lambda b: (-b.average_rating, -b.review_count))
 
     paginator = Paginator(books, 10)
     page_number = request.GET.get('page')
