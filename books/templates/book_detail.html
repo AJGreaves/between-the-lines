@@ -113,10 +113,11 @@
                 </h3>
                 <div class="review-preview">
                     <!-- show start of review up to 30 words -->
+                    <!-- inline CSS needed to activate JavaScript to open larger review -->
                     <div class="short-review pb-2">{{ review.content|truncatewords:30 }}</div>
                     <!-- linebreaksbr used to ensure user's line breaks are rendered 
                          in the html by replacing them with <br> tags-->
-                    <div class="full-review pb-2">{{ review.content|linebreaksbr }}</div>
+                    <div class="full-review pb-2" style="display: none;">{{ review.content|linebreaksbr }}</div>
                     <!-- hide Read more link when truncated version is already the whole review -->
                     {% if review.content|wordcount > 30 %}
                         <a href="#" class="toggle-review pt-0">Read more</a>
