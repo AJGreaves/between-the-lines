@@ -111,7 +111,7 @@ def books_by_genre_view(request, slug):
     context = {
         'page_obj': page_obj,
         'genre': genre,
-        'total_books': books.count(),
+        'total_books': len(books),
         'num_pages': paginator.num_pages,
     }
     return render(request, 'books_by_genre.html', context)

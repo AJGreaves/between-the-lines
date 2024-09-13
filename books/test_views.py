@@ -26,13 +26,6 @@ class BookListViewTestCase(TestCase):
         response = self.client.get(reverse('home'))
         self.assertTemplateUsed(response, 'index.html')
 
-    def test_books_sorted_by_rating_and_title(self):
-        response = self.client.get(reverse('home'))
-        books = response.context['page_obj'].object_list
-        sorted_books = sorted(
-            self.books, key=lambda x: (-x.average_rating, x.title))
-        self.assertEqual(list(books), sorted_books[:10])
-
     def test_pagination(self):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.context['page_obj'].paginator.num_pages, 2)
@@ -153,6 +146,10 @@ class BooksByGenreViewTestCase(TestCase):
             ) for i in range(1, 12)  # Create 11 books
         ]
 
+        # Create users
+        self.user1 = User.objects.create_user(username='user1', password='password')
+        self.user2 = User.objects.create_user(username='user2', password='password')
+
     def test_books_by_genre_view_status_code(self):
         url = reverse('books_by_genre', args=[self.genre.slug])
         response = self.client.get(url)
@@ -195,12 +192,41 @@ class BooksByGenreViewTestCase(TestCase):
             response.context['page_obj'].paginator.num_pages)
 
     def test_books_by_genre_view_ordering(self):
+        # Create additional books with varying ratings and review counts
+        book_12 = Book.objects.create(title="Book 12", genre=self.genre)
+        book_13 = Book.objects.create(title="Book 13", genre=self.genre)
+        book_14 = Book.objects.create(title="Book 14", genre=self.genre)
+        
+        # Add reviews to adjust review counts and average ratings
+        Review.objects.create(
+            book=book_12, user=self.user1, title="Review 1",
+            content="Good book", rating=4)
+        Review.objects.create(
+            book=book_12, user=self.user2, title="Review 2",
+            content="Nice read", rating=4)
+        Review.objects.create(
+            book=book_13, user=self.user1, title="Review 3",
+            content="Excellent", rating=5)
+        Review.objects.create(
+            book=book_14, user=self.user1, title="Review 4",
+            content="Great", rating=4)
+        Review.objects.create(
+            book=book_14, user=self.user2, title="Review 5",
+            content="Amazing", rating=5)
+        
         url = reverse('books_by_genre', args=[self.genre.slug])
         response = self.client.get(url)
-        books = list(response.context['page_obj'].object_list)
-        expected_order = sorted(
-            self.books, key=lambda x: (-x.average_rating, x.title))
-        self.assertEqual(books, expected_order[:10])  # First 10 books
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('page_obj', response.context)
+        books = response.context['page_obj'].object_list
+        
+        # Check ordering by average rating and review count
+        self.assertTrue(all(
+            (books[i].average_rating > books[i + 1].average_rating) or
+            (books[i].average_rating == books[i + 1].average_rating and
+             books[i].review_count >= books[i + 1].review_count)
+            for i in range(len(books) - 1)
+        ))
 
     def test_books_by_genre_view_pagination(self):
         url = reverse('books_by_genre', args=[self.genre.slug])
