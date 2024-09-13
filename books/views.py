@@ -57,6 +57,11 @@ def book_detail_view(request, pk, slug):
             reviews = [user_review] + [
                 review for review in reviews if review != user_review
             ]
+    
+    # Add pagination for reviews
+    paginator = Paginator(reviews, 5)  # 5 reviews per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -73,7 +78,7 @@ def book_detail_view(request, pk, slug):
 
     context = {
         'book': book,
-        'reviews': reviews,
+        'page_obj': page_obj,
         'average_rating': average_rating,
         'form': form,
         'user_review': user_review,
