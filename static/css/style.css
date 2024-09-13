@@ -72,6 +72,11 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     padding-top: 0;
 }
 
+#home .img-fluid,
+#books-by-genre .img-fluid {
+    width: 100%;
+}
+
 /* navbar */
 #navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -92,11 +97,13 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
     font-size: 1.3rem;
 }
 
-#home .average-rating {
+#home .average-rating,
+#books-by-genre .average-rating {
     margin: .4rem 0;
 }
 
-#home .average-rating i {
+#home .average-rating i,
+#books-by-genre .average-rating i {
     font-size: 1rem;
 }
 

@@ -3,7 +3,7 @@
 {% load custom_filters %}
 {% block title %}Between the Lines | {{ genre.name }}{% endblock %}
 {% block content %}
-<div id="home" class="container">
+<div id="books-by-genre" class="container">
     <div class="row">
         <div class="col-md-8 mt-5">
             <h1>{{ total_books }} book{% if total_books > 1 %}s{% endif %} in {{ genre.name }}</h1>

@@ -13,7 +13,7 @@
             {% for book in page_obj %}
             <div class="card mb-3 custom-card">
                 <div class="row g-0">
-                    <div class="col-md-2">
+                    <div class="col-md-2 mb-3 mb-md-0">
                         <a href="{% url 'book_detail' pk=book.pk slug=book.slug %}">
                             <img src="{{ book.cover_image.url }}" class="img-fluid rounded" alt="{{ book.title }}">
                         </a>
