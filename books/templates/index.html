@@ -8,17 +8,17 @@
 
 <div id="home" class="container">
     <div class="row">
-        <div class="col-md-8 mt-5">
+        <div class="col-lg-8 mt-3 mt-md-5">
             <h1>All books</h1>
             {% for book in page_obj %}
             <div class="card mb-3 custom-card">
-                <div class="row g-0">
-                    <div class="col-md-2 mb-3 mb-md-0">
+                <div class="row justify-content-center g-0">
+                    <div class="col-6 col-sm-3 col-md-2 mb-3 mb-md-0">
                         <a href="{% url 'book_detail' pk=book.pk slug=book.slug %}">
                             <img src="{{ book.cover_image.url }}" class="img-fluid rounded" alt="{{ book.title }}">
                         </a>
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-sm-9 col-md-10 text-center text-sm-start">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a href="{% url 'book_detail' pk=book.pk slug=book.slug %}">{{book.title }}</a>
